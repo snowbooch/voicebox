@@ -1,19 +1,20 @@
 services:
   voicebox:
     build: .
-    container_name: voicebox
+    container_name: voicebox-fork
     restart: unless-stopped
-    network_mode: "host"
     ports:
       - "${HOST_PORT}:17493"
     volumes:
       - ${VOLUME_GENERATIONS}:/app/data/generations
-      - ${VOLUME_DATA}:/app/data
-      - ${VOLUME_MODEL_CACHE}:/home/voicebox/.cache/huggingface
+      - voicebox-data:/app/data
+      - huggingface-cache:/home/voicebox/.cache/huggingface
     environment:
       - LOG_LEVEL=info
       - NUMBA_CACHE_DIR=/tmp/numba_cache
       - VOICEBOX_CORS_ORIGINS=${ALLOWED_ORIGINS}
+    networks:
+      - voicebox-net
     devices:
       - /dev/dri:/dev/dri
       - /dev/dri/renderD128:/dev/dri/renderD128
@@ -22,3 +23,11 @@ services:
         limits:
           cpus: '8'
           memory: 16G
+
+networks:
+  voicebox-net:
+    driver: host
+
+volumes:
+  voicebox-data:
+  huggingface-cache:
