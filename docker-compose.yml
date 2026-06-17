@@ -9,7 +9,7 @@ services:
     volumes:
       - ${VOLUME_GENERATIONS}:/app/data/generations
       - ${VOLUME_DATA}:/app/data
-      - ${VOLUME_MODEL_CACHE}:/home/voicebox/.cache/huggingfac
+      - ${VOLUME_MODEL_CACHE}:/home/voicebox/.cache/huggingface
     environment:
       - LOG_LEVEL=info
       - NUMBA_CACHE_DIR=/tmp/numba_cache
