@@ -26,7 +26,7 @@ services:
 
 networks:
   voicebox-net:
-    driver: host
+    driver: bridge
 
 volumes:
   voicebox-data:
