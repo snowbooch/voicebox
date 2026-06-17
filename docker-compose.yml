@@ -3,40 +3,22 @@ services:
     build: .
     container_name: voicebox
     restart: unless-stopped
-
+    network_mode: "host"
     ports:
-      # Bind to localhost only for security
-      - "127.0.0.1:17493:17493"
-
+      - "${HOST_PORT}:17493"
     volumes:
-      # Bind-mount for generated audio (customize the host path as needed)
-      # Host side:      ./output/
-      # Container side: /app/data/generations/
-      - ./output:/app/data/generations
-
-      # Named volume for profiles, DB, cache (persists across container restarts)
-      - voicebox-data:/app/data
-
-      # HuggingFace model cache (so models aren't re-downloaded on rebuild)
-      - huggingface-cache:/home/voicebox/.cache/huggingface
-
+      - ${VOLUME_GENERATIONS}:/app/data/generations
+      - ${VOLUME_DATA}:/app/data
+      - ${VOLUME_MODEL_CACHE}:/home/voicebox/.cache/huggingfac
     environment:
       - LOG_LEVEL=info
       - NUMBA_CACHE_DIR=/tmp/numba_cache
-
-    networks:
-      - voicebox-net
-
+      - VOICEBOX_CORS_ORIGINS=${ALLOWED_ORIGINS}
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/dri/renderD128:/dev/dri/renderD128
     deploy:
       resources:
         limits:
-          cpus: '4'
-          memory: 8G
-
-networks:
-  voicebox-net:
-    driver: bridge
-
-volumes:
-  voicebox-data:
-  huggingface-cache:
+          cpus: '8'
+          memory: 16G
